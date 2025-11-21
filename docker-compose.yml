@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  solomining-exporter:
+    # Pull from GitLab Container Registry
+    # If authentication is needed, run: # No login needed for Docker Hub public images
+    image: clanktechstudio/solomining.io-dashboard:latest
+
+    # OR: Build locally (uncomment the lines below and comment out 'image' above)
+    # build:
+    #   context: ./exporter
+    #   dockerfile: Dockerfile
+
+    container_name: solomining-exporter
+    restart: unless-stopped
+    ports:
+      - "9123:9123"
+    environment:
+      # Scrape interval in seconds
+      - SCRAPE_INTERVAL=60
+      # Port for Prometheus metrics
+      - EXPORTER_PORT=9123
+      # Bitcoin Cash address to monitor
+      - BCH_ADDRESS=bitcoincash:YOUR_BCH_ADDRESS_HERE
+      # Base URL for the mining pool
+      - BASE_URL=https://bchnode.solomining.io/address.php
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:9123/metrics')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

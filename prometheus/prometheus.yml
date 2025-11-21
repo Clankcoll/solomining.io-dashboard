@@ -1,0 +1,24 @@
+# Prometheus configuration for solomining.io exporter
+
+global:
+  scrape_interval: 60s      # Scrape targets every 60 seconds
+  evaluation_interval: 60s   # Evaluate rules every 60 seconds
+
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+    monitor: 'solomining-monitor'
+
+# Scrape configurations
+scrape_configs:
+  # Solomining.io exporter
+  - job_name: 'solomining'
+    static_configs:
+      - targets: ['solomining-exporter:9123']
+    scrape_interval: 60s
+    scrape_timeout: 30s
+
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']

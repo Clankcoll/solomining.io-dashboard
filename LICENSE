@@ -1,0 +1,57 @@
+# Dual License
+
+Copyright (c) 2025 ClankTech
+
+**IMPORTANT:** This dual license applies ONLY to the **solomining.io Prometheus Exporter code** (`exporter.py` and associated configuration files created by this project).
+
+Third-party components included via Docker Compose retain their own licenses:
+- **Prometheus**: Apache 2.0 License
+- **Grafana OSS**: AGPL v3 License
+
+This project does not modify or create derivative works of Prometheus or Grafana.
+
+## Personal Use License
+
+This software is free to use for **personal, non-commercial purposes**.
+
+Individuals may use, copy, modify, and distribute this software for personal mining monitoring operations without any fees.
+
+## Commercial Use License
+
+**Commercial entities** (businesses, corporations, organizations with revenue-generating activities) must obtain a separate commercial license to use this software.
+
+Commercial use includes, but is not limited to:
+- Use by companies, corporations, or business entities
+- Use in revenue-generating operations or services
+- Offering this software as part of a paid service
+- Integration into commercial products
+
+To obtain a commercial license, please contact:
+- Email: info@clank.tech
+- GitHub: https://github.com/Clankcoll/solomining.io-dashboard
+
+## Terms and Conditions
+
+**Personal Use:**
+- ✅ Personal mining operations
+- ✅ Individual hobbyists
+- ✅ Educational purposes
+- ✅ Non-profit personal projects
+
+**Requires Commercial License:**
+- ❌ Mining pools or mining services
+- ❌ Corporate/business use
+- ❌ Hosting as a paid service
+- ❌ White-label redistribution for profit
+
+## Data Source & Attribution
+
+This software accesses publicly available mining statistics from **solomining.io**.
+
+- This project is NOT affiliated with or endorsed by solomining.io
+- Users are responsible for ensuring their usage complies with any applicable terms
+- The data accessed is publicly available without authentication
+
+## Disclaimer
+
+THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

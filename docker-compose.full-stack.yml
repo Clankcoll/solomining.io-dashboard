@@ -1,0 +1,104 @@
+version: '3.8'
+
+# Full-stack deployment with Prometheus, Grafana, and Exporter
+# Pre-configured and ready to use - just set your BCH address in .env file
+
+services:
+  # Solomining.io Exporter
+  solomining-exporter:
+    # Pull from GitLab Container Registry
+    # If authentication is needed, run: # No login needed for Docker Hub public images
+    image: clanktechstudio/solomining.io-dashboard:latest
+    container_name: solomining-exporter
+    restart: unless-stopped
+    environment:
+      # Scrape interval in seconds
+      - SCRAPE_INTERVAL=${SCRAPE_INTERVAL:-60}
+      # Port for Prometheus metrics
+      - EXPORTER_PORT=9123
+      # Your mining address (SET THIS IN .env FILE!)
+      - BCH_ADDRESS=${BCH_ADDRESS:-bitcoincash:YOUR_ADDRESS_HERE}
+      # Base URL for the mining pool
+      - BASE_URL=${POOL_URL:-https://bchnode.solomining.io/address.php}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:9123/metrics')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - monitoring
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  # Prometheus - Metrics Storage and Querying
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=90d'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    ports:
+      - "9090:9090"
+    networks:
+      - monitoring
+    depends_on:
+      - solomining-exporter
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  # Grafana - Visualization Dashboard
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: unless-stopped
+    volumes:
+      # Grafana data persistence
+      - ./grafana_data:/var/lib/grafana
+      # Provisioning: Auto-configure Prometheus datasource
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      # Provisioning: Auto-load dashboards
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      # Dashboard JSON files
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    environment:
+      # Security settings
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+      # Server settings
+      - GF_SERVER_ROOT_URL=http://localhost:3000
+      # Allow anonymous access (optional, set to false for production)
+      - GF_AUTH_ANONYMOUS_ENABLED=false
+      # Disable Grafana analytics
+      - GF_ANALYTICS_REPORTING_ENABLED=false
+      - GF_ANALYTICS_CHECK_FOR_UPDATES=false
+    ports:
+      - "3000:3000"
+    networks:
+      - monitoring
+    depends_on:
+      - prometheus
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+# Internal network for service communication
+networks:
+  monitoring:
+    driver: bridge
